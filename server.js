@@ -1,9 +1,11 @@
 import express from "express";
 import path from "path";
 import fs from "fs";
+import cors from "cors";
 import { createServer as createViteServer } from "vite";
 
 const app = express();
+app.use(cors());
 app.use(express.json());
 
 const PORT = 3000;
