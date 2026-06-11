@@ -1,0 +1,6 @@
+{
+  "name": "Counselor and Client Platform",
+  "description": "Secure scheduling, interactive video, chat, email, payment processing, and clinical records management for counselors and clients.",
+  "requestFramePermissions": ["camera", "microphone"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

@@ -1,0 +1,26 @@
+# Render deployment configuration for backend
+# Place this file at: render.yaml
+
+services:
+  - type: web
+    name: counselor-platform-backend
+    env: node
+    plan: free # Change to 'standard' for production
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 3000
+    routes:
+      - path: /api
+        destination: http://localhost:3000/api
+    healthCheckPath: /api/counselors
+    autoDeployBranch: main
+    buildFilter:
+      paths:
+        - src/**
+        - package.json
+        - server.js
+        - tsconfig.json

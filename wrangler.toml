@@ -1,0 +1,24 @@
+# Cloudflare Workers configuration for frontend deployment
+name = "counselor-client-platform"
+main = "dist/index.js"
+compatibility_date = "2024-01-01"
+type = "javascript"
+
+# Build configuration
+[build]
+command = "npm run build"
+cwd = "."
+watch_paths = ["src/**/*.tsx", "src/**/*.ts", "index.html"]
+
+# Environment-specific settings
+[env.production]
+routes = [
+  { pattern = "counselor-client-platform.pages.dev", zone_name = "pages.dev" }
+]
+
+# Cloudflare Pages settings (alternative to Workers)
+[pages_build_config]
+build_command = "npm run build"
+build_caches_control = "max-age=3600"
+root_dir = "dist"
+compatibility_date = "2024-01-01"

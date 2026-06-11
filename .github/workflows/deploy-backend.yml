@@ -1,0 +1,57 @@
+name: Deploy to Render (Backend)
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'server.js'
+      - 'package.json'
+      - 'src/**'
+      - '.github/workflows/deploy-backend.yml'
+  workflow_dispatch:
+
+env:
+  NODE_VERSION: '18'
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run linter
+        run: npm run lint
+
+      - name: Deploy to Render via API
+        run: |
+          curl --request POST \
+            --url https://api.render.com/deploy/srv-${{ secrets.RENDER_SERVICE_ID }} \
+            --header "accept: application/json" \
+            --header "authorization: Bearer ${{ secrets.RENDER_API_KEY }}" \
+            --header "content-type: application/json" \
+            --data '{"clearCache":"do_clear"}'
+
+      - name: Wait for deployment
+        run: |
+          echo "Deployment initiated on Render..."
+          sleep 30
+          echo "Your backend should be live at: https://counselor-platform-backend.onrender.com"
+
+      - name: Notify deployment
+        uses: 8398a7/action-slack@v3
+        if: always()
+        with:
+          status: ${{ job.status }}
+          text: 'Backend deployed to Render: ${{ env.RENDER_SERVICE_URL }}'
+          webhook_url: ${{ secrets.SLACK_WEBHOOK }}
